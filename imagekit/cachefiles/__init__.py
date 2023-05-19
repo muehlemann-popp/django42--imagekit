@@ -45,8 +45,12 @@ class ImageCacheFile(BaseIKFile, ImageFile):
                 name = fn(generator)
         self.name = name
 
-        storage = (callable(storage) and storage()) or storage or \
-            getattr(generator, 'cachefile_storage', None) or get_storage()
+        cachefile_storage = getattr(generator, 'cachefile_storage', None)
+        storage = (
+                (callable(storage) and storage())
+                or (callable(cachefile_storage) and cachefile_storage())
+                or get_storage()
+        )
         self.cachefile_backend = (
             cachefile_backend
             or getattr(generator, 'cachefile_backend', None)
